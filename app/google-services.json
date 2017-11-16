@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "59641806721",
+    "firebase_url": "https://perigoalert-1510495049872.firebaseio.com",
+    "project_id": "perigoalert-1510495049872",
+    "storage_bucket": "perigoalert-1510495049872.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59641806721:android:aa2899446a13219a",
+        "android_client_info": {
+          "package_name": "com.example.aluno.perigoalert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "59641806721-ttecgam8gj2htq2i7t8bqbo15n5cnbno.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL-FvGT8PxCYl9WbSKaolO7pYgaVBsyjI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

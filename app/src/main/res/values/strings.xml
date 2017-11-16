@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PerigoAlert</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_mapa">Perigo Alert</string>
+    <string name="google_maps_key">AIzaSyBpYq1j3eJXEx3kaoNNF1b5RVy8hlZvoac</string>
+
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+
+    <!-- Change the following strings as required -->
+    <string name="back4app_app_id">YvNKFo3n1iSxywXPRM7UUvcCZIe936yxh05Lu9B2</string>
+    <string name="back4app_client_key">NogLMVMOGZ6gvISjDM4tlSLjD5zcFknLBIPX8qxw</string>
+</resources>
