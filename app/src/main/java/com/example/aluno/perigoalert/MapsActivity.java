@@ -20,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -79,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney, Australia, and move the camera.
         Log.i(TAG,"MAPS ACTIVITY FUNCIONANDO");
         LatLng braganca = new LatLng(-22.9460577, -46.5262442);
-        mMap.addMarker(new MarkerOptions().position(braganca).title("Você está aqui"));
+        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(braganca).title("Você está aqui"));
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(braganca).build();
@@ -90,6 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng point) {
                 insertMarker(point);
+                getMarkers();
             }
         });
 
@@ -244,7 +246,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Roubo");
                     }
 
                     @Override
@@ -258,7 +260,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Assassinato");
                     }
 
                     @Override
@@ -272,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Ponto de Drogas");
                     }
 
                     @Override
@@ -286,7 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Roubo de Automoveis");
                     }
 
                     @Override
@@ -300,7 +302,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Estupro");
                     }
 
                     @Override
@@ -312,27 +314,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void getAllLocations(Map<String,Object> locations) {
+    private void getAllLocations(Map<String,Object> locations, String perigo) {
 
         for (Map.Entry<String, Object> entry : locations.entrySet()){
 
             Date newDate = new Date(Long.valueOf(entry.getKey()));
+
             Map singleLocation = (Map) entry.getValue();
+
             LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
-            addGreenMarker(newDate, latLng);
+
+            addMarkerPerigo(newDate, latLng, perigo);
 
         }
 
 
     }
 
-    private void addGreenMarker(Date newDate, LatLng latLng) {
+    private void addMarkerPerigo(Date newDate, LatLng latLng, String perigo) {
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title(dt.format(newDate));
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        markerOptions.title(perigo);
+
+        if (perigo == "Roubo") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        if (perigo == "Assassinato") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+        if (perigo == "Ponto de Drogas") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+        if (perigo == "Roubo de Automoveis") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+        if (perigo == "Estupro") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.snippet("Informação adicionada: " + String.valueOf(dt.format(newDate)));
         mMap.addMarker(markerOptions);
+
     }
 
     EditText input;
@@ -382,8 +394,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         dialog.show();
-
-
 
 
 
