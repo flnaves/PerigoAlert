@@ -1,7 +1,11 @@
 package com.example.aluno.perigoalert;
 
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,5 +46,49 @@ public class AddPerigo extends FragmentActivity implements OnMapReadyCallback {
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+
+                insertMarker(point);
+
+            }
+        });
+
     }
+    EditText input;
+
+    public void insertMarker(final LatLng local){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Você realmente deseja adicionar um local de perigo?");
+        alertDialog.setMessage("O que aconteceu?");
+
+        input = new EditText(this);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String txtPerigo = input.getText().toString();
+                mMap.addMarker(new MarkerOptions().position(local).title(txtPerigo));
+            }
+        });
+
+        alertDialog.setNegativeButton("NAO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        final AlertDialog ad = alertDialog.create();
+
+
+        ad.show();
+
+    }
+
+
+
 }
