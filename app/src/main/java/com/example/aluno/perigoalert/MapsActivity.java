@@ -39,7 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Marker currentLocationMaker;
     private LatLng currentLocationLatLong;
-    private DatabaseReference mDataBase;
+    public DatabaseReference mDataBase;
 
     private static final String TAG = "Entrou";
 
@@ -93,15 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         Log.i(TAG,"ANTES DO ON LOCATION DATA");
-        //LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
+        LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
         Log.i(TAG,"DEPOIS DO ON LOCATION DATA");
-        //mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
-
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.setValue("Hello, World!");
+        mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
 
 
         Toast.makeText(this, "Localização atualizada", Toast.LENGTH_SHORT).show();
