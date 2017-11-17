@@ -1,5 +1,6 @@
 package com.example.aluno.perigoalert;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,8 +32,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.location.Location;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,8 +85,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(braganca).build();
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                insertMarker(point);
+            }
+        });
+
+    }
+    //  QUANDO É FEITO A MUDANÇA DE LOCALIZAÇÃO
     @Override
     public void onLocationChanged(Location location) {
         if (currentLocationMaker != null) {
@@ -97,10 +112,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(currentLocationLatLong).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        Log.i(TAG,"ANTES DO ON LOCATION DATA");
-        LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
-        Log.i(TAG,"DEPOIS DO ON LOCATION DATA");
-        mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
+        //Log.i(TAG,"ANTES DO ON LOCATION DATA");
+        //LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
+        //Log.i(TAG,"DEPOIS DO ON LOCATION DATA");
+        //mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
 
 
         Toast.makeText(this, "Localização atualizada", Toast.LENGTH_SHORT).show();
@@ -131,6 +146,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
+    // PERMITIR ATIVAÇÃO DO GPS
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("GPS desativado!");
@@ -151,6 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         alertDialog.show();
     }
 
+    // BUSCA A LOCALIZAÇÃO ATUAL
     private void startGettingLocations() {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -218,9 +235,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // MOSTRA TODAS AS LOCALIZAÇÕES ENCONTRADAS NO FIREBASE
     private void getMarkers(){
 
-        mDataBase.child("location").addListenerForSingleValueEvent(
+        mDataBase.child("location").child("Roubo").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        if (dataSnapshot.getValue() != null)
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+        mDataBase.child("location").child("Assassinato").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        if (dataSnapshot.getValue() != null)
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+        mDataBase.child("location").child("Ponto de Drogas").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        if (dataSnapshot.getValue() != null)
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+        mDataBase.child("location").child("Roubo de Automoveis").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Get map of users in datasnapshot
+                        if (dataSnapshot.getValue() != null)
+                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+        mDataBase.child("location").child("Estupro").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -237,10 +311,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
     private void getAllLocations(Map<String,Object> locations) {
-
-
-
 
         for (Map.Entry<String, Object> entry : locations.entrySet()){
 
@@ -261,6 +333,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.title(dt.format(newDate));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(markerOptions);
+    }
+
+    EditText input;
+
+
+    // ADICIONA UM NOVO MARCADOR QUANDO CLICA NA TELA
+    public void insertMarker(final LatLng local){
+        String opcoes[] = new String[] {"Roubo", "Estupro", "Assassinato", "Ponto de Drogas", "Roubo de Automovel"};
+        //final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
+        //alertDialog.setTitle("Você realmente deseja adicionar um local de perigo?");
+
+        //alertDialog.setMessage("O que aconteceu?");
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setTitle("O que aconteceu? ");
+        dialog.setContentView(R.layout.alertdialog_incidente);
+        dialog.setCancelable(true);
+
+        final RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.rboRoubo);
+        final RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.rboAssassinato);
+        final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.rboPDrogas);
+        final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.rboRAutomoveis);
+        final RadioButton rd4 = (RadioButton) dialog.findViewById(R.id.rboEstupro);
+
+        Button cancelar = (Button) dialog.findViewById(R.id.cancelar);
+
+        Button confirmar = (Button) dialog.findViewById(R.id.confirmar);
+
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        confirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (rd0.isChecked()) mDataBase.child("location").child("Roubo").child(String.valueOf( new Date().getTime())).setValue(local);
+                if (rd1.isChecked()) mDataBase.child("location").child("Assassinato").child(String.valueOf( new Date().getTime())).setValue(local);
+                if (rd2.isChecked()) mDataBase.child("location").child("Ponto de Drogas").child(String.valueOf( new Date().getTime())).setValue(local);
+                if (rd3.isChecked()) mDataBase.child("location").child("Roubo de Automoveis").child(String.valueOf( new Date().getTime())).setValue(local);
+                if (rd4.isChecked()) mDataBase.child("location").child("Estupro").child(String.valueOf( new Date().getTime())).setValue(local);
+                dialog.dismiss();
+            }
+
+        });
+
+        dialog.show();
+
+
+
+
+
+
     }
 
 
