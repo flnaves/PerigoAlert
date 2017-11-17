@@ -25,39 +25,13 @@ public class Inicio extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
         Button btnMapa = (Button) findViewById(R.id.btnMapa);
-        Button btnAddPerigo = (Button) findViewById(R.id.btnAddPerigo);
 
-
-        //Determina que forma será feita a localização
-        //locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE );
-        //Criteria criteria = new Criteria ();
-        //provider = locationManager.GPS_PROVIDER;
-        //try{
-          //  location = locationManager.getLastKnownLocation(provider);
-            //Log.i(TAG,"ATÉ AQUI RODOU");
-        //}catch (SecurityException e){
-          //  e.printStackTrace();
-        //}
-
-        //Quando a pessoa clicar no botão a outra activy será aberta
         btnMapa.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
                intent = new Intent(Inicio.this, MapsActivity.class);
-               //intent.putExtra("lat", location.getLatitude()); <-- POR ENQUANTO NÃO CONSEGUE LOCALIZAR O LOCAL ATUAL
-               //intent.putExtra("lng", location.getLongitude());
                startActivity(intent);
            }
-        });
-
-        btnAddPerigo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                intent = new Intent(Inicio.this, AddPerigo.class);
-                //intent.putExtra("lat", location.getLatitude()); <-- POR ENQUANTO NÃO CONSEGUE LOCALIZAR O LOCAL ATUAL
-                //intent.putExtra("lng", location.getLongitude());
-                startActivity(intent);
-            }
         });
 
 

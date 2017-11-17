@@ -114,16 +114,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(currentLocationLatLong).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        //Log.i(TAG,"ANTES DO ON LOCATION DATA");
-        //LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
-        //Log.i(TAG,"DEPOIS DO ON LOCATION DATA");
-        //mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
-
 
         Toast.makeText(this, "Localização atualizada", Toast.LENGTH_SHORT).show();
         getMarkers();
     }
 
+    //FUNÇÃO USADA NO startGettingLocations()
     private ArrayList findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList result = new ArrayList();
 
@@ -135,6 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return result;
     }
 
+    //FUNÇÃO USADA NO findUnAskedPermissions()
     private boolean hasPermission(String permission) {
         if (canAskPermission()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -144,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
+    //FUNÇÃO USADA NO hasPermission()
     private boolean canAskPermission() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
@@ -313,17 +311,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
+    //FUNÇÃO USADA NO getMarkers()
     private void getAllLocations(Map<String,Object> locations, String perigo) {
 
         for (Map.Entry<String, Object> entry : locations.entrySet()){
-
             Date newDate = new Date(Long.valueOf(entry.getKey()));
-
             Map singleLocation = (Map) entry.getValue();
-
             LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
-
             addMarkerPerigo(newDate, latLng, perigo);
 
         }
@@ -331,6 +325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // FUNÇÃO USADA NO getAllLocations()
     private void addMarkerPerigo(Date newDate, LatLng latLng, String perigo) {
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         MarkerOptions markerOptions = new MarkerOptions();
@@ -352,12 +347,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // ADICIONA UM NOVO MARCADOR QUANDO CLICA NA TELA
     public void insertMarker(final LatLng local){
-        String opcoes[] = new String[] {"Roubo", "Estupro", "Assassinato", "Ponto de Drogas", "Roubo de Automovel"};
-        //final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(this);
-        //alertDialog.setTitle("Você realmente deseja adicionar um local de perigo?");
-
-        //alertDialog.setMessage("O que aconteceu?");
-
         final Dialog dialog = new Dialog(this);
         dialog.setTitle("O que aconteceu? ");
         dialog.setContentView(R.layout.alertdialog_incidente);
