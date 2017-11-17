@@ -25,6 +25,7 @@ public class Inicio extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
         Button btnMapa = (Button) findViewById(R.id.btnMapa);
+        Button btnAddPerigo = (Button) findViewById(R.id.btnAddPerigo);
 
 
         //Determina que forma será feita a localização
@@ -49,6 +50,15 @@ public class Inicio extends AppCompatActivity implements LocationListener {
            }
         });
 
+        btnAddPerigo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(Inicio.this, AddPerigo.class);
+                //intent.putExtra("lat", location.getLatitude()); <-- POR ENQUANTO NÃO CONSEGUE LOCALIZAR O LOCAL ATUAL
+                //intent.putExtra("lng", location.getLongitude());
+                startActivity(intent);
+            }
+        });
 
 
     }

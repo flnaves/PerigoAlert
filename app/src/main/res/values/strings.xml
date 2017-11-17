@@ -9,4 +9,5 @@
     <!-- Change the following strings as required -->
     <string name="back4app_app_id">YvNKFo3n1iSxywXPRM7UUvcCZIe936yxh05Lu9B2</string>
     <string name="back4app_client_key">NogLMVMOGZ6gvISjDM4tlSLjD5zcFknLBIPX8qxw</string>
+    <string name="title_activity_add_perigo">Map</string>
 </resources>
