@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "59641806721-3tuq0miins3se1nrkpq6remeebtsi7ft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aluno.perigoalert",
+            "certificate_hash": "3a2b70fc10258d60a19fe6a9745148885850e7f1"
+          }
+        },
+        {
+          "client_id": "59641806721-32cvqg8otut6bft0sm77v4d5gp80spji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aluno.perigoalert",
+            "certificate_hash": "fb887e1a430e6bd5b912a1e6e519120fbe65ccf0"
+          }
+        },
+        {
           "client_id": "59641806721-ttecgam8gj2htq2i7t8bqbo15n5cnbno.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "59641806721-ttecgam8gj2htq2i7t8bqbo15n5cnbno.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

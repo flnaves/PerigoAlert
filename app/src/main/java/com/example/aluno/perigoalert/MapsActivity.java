@@ -24,10 +24,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import android.location.Location;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
@@ -35,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Marker currentLocationMaker;
     private LatLng currentLocationLatLong;
+    private DatabaseReference mDataBase;
 
     private static final String TAG = "Entrou";
 
@@ -51,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         startGettingLocations();
 
+        mDataBase = FirebaseDatabase.getInstance().getReference();
 
     }
 
@@ -85,6 +91,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Move to new location
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(currentLocationLatLong).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        Log.i(TAG,"ANTES DO ON LOCATION DATA");
+        //LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
+        Log.i(TAG,"DEPOIS DO ON LOCATION DATA");
+        //mDataBase.child("location").child(String.valueOf( new Date().getTime())).setValue(locationData);
+
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
+
 
         Toast.makeText(this, "Localização atualizada", Toast.LENGTH_SHORT).show();
     }
