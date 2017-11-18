@@ -70,7 +70,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startGettingLocations();
         mDataBase = FirebaseDatabase.getInstance().getReference();
         getMarkers();
-
     }
 
     @Override
@@ -108,7 +107,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.position(currentLocationLatLong);
         markerOptions.title("Localização atual");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        mMap.clear();
         currentLocationMaker = mMap.addMarker(markerOptions);
+        getMarkers();
 
         //Move to new location
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(currentLocationLatLong).build();
@@ -244,6 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
                         if (dataSnapshot.getValue() != null)
+
                             getAllLocations((Map<String,Object>) dataSnapshot.getValue(), "Roubo");
                     }
 
@@ -315,10 +317,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void getAllLocations(Map<String,Object> locations, String perigo) {
 
         for (Map.Entry<String, Object> entry : locations.entrySet()){
+
             Date newDate = new Date(Long.valueOf(entry.getKey()));
             Map singleLocation = (Map) entry.getValue();
             LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
-            addMarkerPerigo(newDate, latLng, perigo);
+            Long score = (Long) singleLocation.get("score");
+            if (score.intValue() < 10) addMarkerPerigo(newDate, latLng, perigo);
+
 
         }
 
@@ -372,7 +377,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         confirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (rd0.isChecked()) mDataBase.child("location").child("Roubo").child(String.valueOf( new Date().getTime())).setValue(local);
+                DatabaseReference mNovo = mDataBase.child("location").child("Roubo").child(String.valueOf( new Date().getTime()));
+                if(rd0.isChecked()){
+                    mNovo.setValue(local);
+                    mNovo.child("score").setValue(0);
+                }
                 if (rd1.isChecked()) mDataBase.child("location").child("Assassinato").child(String.valueOf( new Date().getTime())).setValue(local);
                 if (rd2.isChecked()) mDataBase.child("location").child("Ponto de Drogas").child(String.valueOf( new Date().getTime())).setValue(local);
                 if (rd3.isChecked()) mDataBase.child("location").child("Roubo de Automoveis").child(String.valueOf( new Date().getTime())).setValue(local);

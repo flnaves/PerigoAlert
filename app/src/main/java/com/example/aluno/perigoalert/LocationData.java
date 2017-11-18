@@ -1,16 +1,18 @@
 package com.example.aluno.perigoalert;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by ecari on 17/11/2017.
  */
 
 public class LocationData {
 
-    public double latitude;
-    public double longitude;
+    LatLng local;
+    public double score;
 
-    public LocationData(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public LocationData(LatLng local, double score) {
+        this.local = local;
+        this.score = score;
     }
 }
