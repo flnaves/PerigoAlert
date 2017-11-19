@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Array;
@@ -71,6 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mDataBase = FirebaseDatabase.getInstance().getReference();
         getMarkers();
     }
+    public boolean verificador = false;
+    public String repeteMarcador="";
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -89,12 +92,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
+
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                showVoto(marker);
+                return false;
+            }
+        });
+
+
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng point) {
                 insertMarker(point);
-                getMarkers();
             }
         });
 
     }
+
+    public void showVoto(Marker marker){
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setTitle(marker.getTitle());
+
+        dialog.setContentView(R.layout.alertdialog_votacao);
+
+        Button verdadeiro = (Button) dialog.findViewById(R.id.verdadeiro);
+        Button falso = (Button) dialog.findViewById(R.id.falso);
+
+        falso.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        verdadeiro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+
+    }
+
     //  QUANDO É FEITO A MUDANÇA DE LOCALIZAÇÃO
     @Override
     public void onLocationChanged(Location location) {
@@ -377,15 +428,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         confirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference mNovo = mDataBase.child("location").child("Roubo").child(String.valueOf( new Date().getTime()));
+                DatabaseReference mNovo;
                 if(rd0.isChecked()){
+                    mNovo = mDataBase.child("location").child("Roubo").child(String.valueOf( new Date().getTime()));
                     mNovo.setValue(local);
                     mNovo.child("score").setValue(0);
                 }
-                if (rd1.isChecked()) mDataBase.child("location").child("Assassinato").child(String.valueOf( new Date().getTime())).setValue(local);
-                if (rd2.isChecked()) mDataBase.child("location").child("Ponto de Drogas").child(String.valueOf( new Date().getTime())).setValue(local);
-                if (rd3.isChecked()) mDataBase.child("location").child("Roubo de Automoveis").child(String.valueOf( new Date().getTime())).setValue(local);
-                if (rd4.isChecked()) mDataBase.child("location").child("Estupro").child(String.valueOf( new Date().getTime())).setValue(local);
+                if (rd1.isChecked()){
+                    mNovo = mDataBase.child("location").child("Assassinato").child(String.valueOf( new Date().getTime()));
+                    mNovo.setValue(local);
+                    mNovo.child("score").setValue(0);
+                }
+                if (rd2.isChecked()){
+                    mNovo = mDataBase.child("location").child("Ponto de Drogas").child(String.valueOf( new Date().getTime()));
+                    mNovo.setValue(local);
+                    mNovo.child("score").setValue(0);
+                }
+                if (rd3.isChecked()) {
+                    mNovo = mDataBase.child("location").child("Roubo de Automoveis").child(String.valueOf( new Date().getTime()));
+                    mNovo.setValue(local);
+                    mNovo.child("score").setValue(0);
+                }
+                if (rd4.isChecked()){
+                    mNovo = mDataBase.child("location").child("Estupro").child(String.valueOf( new Date().getTime()));
+                    mNovo.setValue(local);
+                    mNovo.child("score").setValue(0);
+                }
+                getMarkers();
                 dialog.dismiss();
             }
 
