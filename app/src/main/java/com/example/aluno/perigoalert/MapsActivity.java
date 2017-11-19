@@ -54,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker currentLocationMaker;
     private LatLng currentLocationLatLong;
     public DatabaseReference mDataBase;
+    LatLng localizacaoAtual = new LatLng(-22.9460577, -46.5262442);
 
     private static final String TAG = "Entrou";
 
@@ -81,11 +82,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney, Australia, and move the camera.
         Log.i(TAG,"MAPS ACTIVITY FUNCIONANDO");
-        LatLng braganca = new LatLng(-22.9460577, -46.5262442);
-        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(braganca).title("Você está aqui"));
+
+        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(localizacaoAtual).title("Localização atual"));
 
 
-        CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(braganca).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(localizacaoAtual).build();
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -101,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public boolean onMarkerClick(Marker marker) {
+
                 showVoto(marker);
                 return false;
             }
@@ -117,34 +119,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void showVoto(Marker marker){
+    public void showVoto(final Marker marker){
 
         final Dialog dialog = new Dialog(this);
         dialog.setTitle(marker.getTitle());
 
         dialog.setContentView(R.layout.alertdialog_votacao);
 
-        Button verdadeiro = (Button) dialog.findViewById(R.id.verdadeiro);
-        Button falso = (Button) dialog.findViewById(R.id.falso);
+        Button verdadeira = (Button) dialog.findViewById(R.id.verdadeira);
+        Button falsa = (Button) dialog.findViewById(R.id.falsa);
 
-        falso.setOnClickListener(new View.OnClickListener() {
+        verdadeira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mDataBase.child("location").child(marker.getTitle()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //Get map of users in datasnapshot
+                                if (dataSnapshot.getValue() != null) {
+                                    atualizaScore((Map<String, Object>) dataSnapshot.getValue(), marker, true);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                //handle databaseError
+                            }
+                        });
                 dialog.dismiss();
+
             }
         });
 
-        verdadeiro.setOnClickListener(new View.OnClickListener() {
+        falsa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                mDataBase.child("location").child(marker.getTitle()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //Get map of users in datasnapshot
+                                if (dataSnapshot.getValue() != null) {
+                                    atualizaScore((Map<String, Object>) dataSnapshot.getValue(), marker,false);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                //handle databaseError
+                            }
+                        });
                 dialog.dismiss();
+
             }
         });
 
-        dialog.show();
+       dialog.show();
+
 
 
     }
+
+    private void atualizaScore(Map<String,Object> locations, Marker marker, boolean verdadeiro) {
+
+        for (Map.Entry<String, Object> entry : locations.entrySet()){
+
+            Map singleLocation = (Map) entry.getValue();
+            LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
+            Long score = null;
+            score = (Long) singleLocation.get("score");
+            if (verdadeiro)  mDataBase.child("location").child(marker.getTitle()).child(String.valueOf(marker.getSnippet())).child("score").setValue(score+1);
+            else mDataBase.child("location").child(marker.getTitle()).child(String.valueOf(marker.getSnippet())).child("score").setValue(score-1);
+
+
+        }
+
+
+    }
+
 
     //  QUANDO É FEITO A MUDANÇA DE LOCALIZAÇÃO
     @Override
@@ -369,11 +423,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Map.Entry<String, Object> entry : locations.entrySet()){
 
-            Date newDate = new Date(Long.valueOf(entry.getKey()));
+            //Date newDate = new Date(Long.valueOf(entry.getKey()));
             Map singleLocation = (Map) entry.getValue();
             LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
             Long score = (Long) singleLocation.get("score");
-            if (score.intValue() < 10) addMarkerPerigo(newDate, latLng, perigo);
+            if (score.intValue() > -10) addMarkerPerigo(entry.getKey().toString(), latLng, perigo);
 
 
         }
@@ -381,19 +435,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+
+
     // FUNÇÃO USADA NO getAllLocations()
-    private void addMarkerPerigo(Date newDate, LatLng latLng, String perigo) {
+    private void addMarkerPerigo(String newDate, LatLng latLng, String perigo) {
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title(perigo);
+        markerOptions.snippet(newDate);
 
         if (perigo == "Roubo") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         if (perigo == "Assassinato") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
         if (perigo == "Ponto de Drogas") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
         if (perigo == "Roubo de Automoveis") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
         if (perigo == "Estupro") markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        markerOptions.snippet("Informação adicionada: " + String.valueOf(dt.format(newDate)));
+
         mMap.addMarker(markerOptions);
 
     }
